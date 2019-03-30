@@ -57,7 +57,6 @@ class Record {
 
 	@Override
 	public String toString() {
-		return "Record [device_id=" + device_id + ", arrival_time=" + arrival_time + ", street_id=" + street_id
-				+ ",street_name=" + street_name + "]";
+		return getRecord();
 	}
 }

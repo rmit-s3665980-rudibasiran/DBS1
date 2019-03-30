@@ -1,4 +1,5 @@
 import java.io.BufferedReader;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -51,16 +52,16 @@ public class dbload {
 		Helper.drawLine();
 
 		FileOutputStream fos = null;
-		File file;
 
-		String mycontent = "This is my Data which needs to be written into the file";
+		DataOutputStream data = new DataOutputStream(fos);
+
+		int numPage = 0;
+		int ttlBytes = 0;
 
 		try {
 
-			file = new File(heapfile);
-			fos = new FileOutputStream(file);
-
-			// create new file if not exist
+			File file = new File(heapfile);
+			fos = new FileOutputStream(heapfile);
 
 			if (!file.exists()) {
 				file.createNewFile();
@@ -70,24 +71,36 @@ public class dbload {
 			// byte[] bytesArray = mycontent.getBytes();
 
 			// fos.write(bytesArray);
-			fos.flush();
+			data.flush();
 			Helper.drawLine();
 			System.out.println("File Written Successfully");
 			Helper.drawLine();
 
 			System.out.println("Reading CSV");
+			Page page = new Page(pagesize);
 			List<Record> records = readRecordsFromCSV(datafile);
 			Helper.drawLine();
 			System.out.println("Printing CSV");
 			for (Record r : records) {
-				System.out.println(r);
+				// System.out.println(r);
 				byte[] bytesArray = r.getRecord().getBytes();
-				System.out.println("Length of record: " + bytesArray.length);
-				fos.write(bytesArray);
+				System.out.println("Length of byte: " + bytesArray.length);
+				if ((ttlBytes + bytesArray.length) > pagesize) {
+
+				} else {
+
+				}
+				if (ttlBytes > pagesize) {
+					ttlBytes = 0;
+					numPage++;
+				}
+				data.write(bytesArray);
 			}
 			Helper.drawLine();
 
-		} catch (IOException ioe) {
+		} catch (
+
+		IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
 			try {
