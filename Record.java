@@ -13,7 +13,7 @@ class Record {
 	private String device_id;
 	private String arrival_time;
 	private String departure_time;
-	private String duration_seconds;
+	private double duration_seconds;
 	private String street_marker;
 	private String sign;
 	private String area;
@@ -21,16 +21,16 @@ class Record {
 	private String street_name;
 	private String between_street1;
 	private String between_street2;
-	private String side_of_street;
+	private double side_of_street;
 	private String in_violation;
 
 	public Record() {
 
 	}
 
-	public Record(String device_id, String arrival_time, String departure_time, String duration_seconds,
+	public Record(String device_id, String arrival_time, String departure_time, double duration_seconds,
 			String street_marker, String sign, String area, String street_id, String street_name,
-			String between_street1, String between_street2, String side_of_street, String in_violation) {
+			String between_street1, String between_street2, double side_of_street, String in_violation) {
 
 		this.device_id = device_id;
 		this.arrival_time = arrival_time;
@@ -47,12 +47,29 @@ class Record {
 		this.in_violation = in_violation;
 	}
 
+	public String getDeviceID() {
+		return this.device_id;
+	}
+
+	public String getStreetName() {
+		return this.street_name;
+	}
+
+	public double getDuration() {
+		return this.duration_seconds;
+	}
+
+	public double getSideOfStreet() {
+		return this.side_of_street;
+	}
+
 	public String getRecord() {
 		return device_id + GlobalClass.delimiter + arrival_time + GlobalClass.delimiter + departure_time
-				+ GlobalClass.delimiter + duration_seconds + GlobalClass.delimiter + street_marker
+				+ GlobalClass.delimiter + Double.toString(duration_seconds) + GlobalClass.delimiter + street_marker
 				+ GlobalClass.delimiter + sign + GlobalClass.delimiter + area + GlobalClass.delimiter + street_id
 				+ GlobalClass.delimiter + street_name + GlobalClass.delimiter + between_street1 + GlobalClass.delimiter
-				+ between_street2 + GlobalClass.delimiter + side_of_street + GlobalClass.delimiter + in_violation;
+				+ between_street2 + GlobalClass.delimiter + Double.toString(side_of_street) + GlobalClass.delimiter
+				+ in_violation;
 	}
 
 }

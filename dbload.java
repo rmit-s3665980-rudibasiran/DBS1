@@ -1,10 +1,9 @@
+import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +27,7 @@ public class dbload {
 
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws Exception {
 
 		// java dbload -p pagesize datafile
 
@@ -57,18 +56,8 @@ public class dbload {
 		int ttlBytes = 0;
 		int numRec = 0;
 
-		File file = null;
-		FileOutputStream fos = null;
-		// DataOutputStream dos = null;
-
+		DataOutputStream dos = null;
 		try {
-
-			file = new File(heapfile);
-			fos = new FileOutputStream(file);
-
-			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test.txt"), "UTF8"));
-
-			// dos = new DataOutputStream(fos);
 
 			// string converted into bytes
 			// byte[] bytesArray = mycontent.getBytes();
@@ -77,48 +66,40 @@ public class dbload {
 			System.out.println("File Written Successfully");
 			Helper.drawLine();
 
+			// return bytes in UTF-8 character encoding
+			// pros - no need to handle UnsupportedEncodingException
+			// pros - bytes in specified encoding scheme
+
 			System.out.println("Reading CSV");
-			Page page = new Page(pagesize);
+			// Page page = new Page(pagesize);
 			List<Record> records = readRecordsFromCSV(datafile);
 			Helper.drawLine();
 			System.out.println("Printing CSV");
+
+			dos = openOutputStream(heapfile);
 			for (Record r : records) {
-
-				String s = new String("Hello World");
-				out.write(s);
-
-				byte[] bytesArray = s.getBytes();
+				writeRecords(r, dos);
 				numRec++;
-				// System.out.println("Record " + numRec + ": Length of byte: " +
-				// bytesArray.length);
-				if ((ttlBytes + bytesArray.length) > pagesize) {
-
+				System.out.println("Page [" + numPage + "] Length of record " + numRec + ": " + r.getRecord().length());
+				if ((ttlBytes + r.getRecord().length()) < pagesize) {
+					ttlBytes = ttlBytes + r.getRecord().length();
 				} else {
-
-				}
-				if (ttlBytes > pagesize) {
 					ttlBytes = 0;
 					numPage++;
 				}
-
-				for (byte b : bytesArray) {
-					System.out.print(b);
-					fos.write(b);
-
-				}
-				fos.flush();
-
-				// to read, use Arrays.toString(bytesArray)
-
 			}
+
+			// to read, use Arrays.toString(bytesArray)
+			dos.close();
+
 			Helper.drawLine();
 
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
 			try {
-				if (fos != null) {
-					fos.close();
+				if (dos != null) {
+					dos.close();
 				}
 			} catch (IOException ioe) {
 				System.out.println("Error in closing the Stream");
@@ -162,7 +143,7 @@ public class dbload {
 		String device_id = metadata[0];
 		String arrival_time = metadata[1];
 		String departure_time = metadata[2];
-		String duration_seconds = metadata[3];
+		double duration_seconds = Double.parseDouble(metadata[3]);
 		String street_marker = metadata[4];
 		String sign = metadata[5];
 		String area = metadata[6];
@@ -170,12 +151,27 @@ public class dbload {
 		String street_name = metadata[8];
 		String between_street1 = metadata[9];
 		String between_street2 = metadata[10];
-		String side_of_street = metadata[11];
+		double side_of_street = Double.parseDouble(metadata[11]);
 		String in_violation = metadata[12];
 
-		// create and return record of this meta-data
-		return new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
+		// create and return record of meta-data
+		Record r = new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
 				street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
+		return r;
+	}
+
+	private static DataOutputStream openOutputStream(String filename) throws Exception {
+		DataOutputStream out = null;
+		File file = new File(filename);
+		out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+		return out;
+	}
+
+	private static void writeRecords(Record r, DataOutputStream out) throws Exception {
+		out.writeUTF(r.getDeviceID());
+		out.writeUTF(r.getStreetName());
+		out.writeDouble(r.getDuration());
+		out.writeDouble(r.getSideOfStreet());
 	}
 
 }
