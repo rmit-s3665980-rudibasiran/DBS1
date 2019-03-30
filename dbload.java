@@ -9,6 +9,16 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+Title: RMIT Database Systems Assignment 1
+Developer(s): 
+- Rudi Basiran <s3665980@student.rmit.edu.au> 
+Date Created: 30 March 2019 
+Description: --
+Notes: --
+Change History:
+ */
+
 public class dbload {
 
 	public dbload() {

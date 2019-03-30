@@ -1,3 +1,13 @@
+/*
+Title: RMIT Database Systems Assignment 1
+Developer(s): 
+- Rudi Basiran <s3665980@student.rmit.edu.au> 
+Date Created: 30 March 2019 
+Description: --
+Notes: --
+Change History:
+ */
+
 class Record {
 
 	private String device_id;
