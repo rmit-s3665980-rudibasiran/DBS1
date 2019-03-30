@@ -3,7 +3,7 @@ Title: RMIT Database Systems Assignment 1
 Developer(s): 
 - Rudi Basiran <s3665980@student.rmit.edu.au> 
 Date Created: 30 March 2019 
-Description: --
+Description: Record Class
 Notes: --
 Change History:
  */
@@ -48,7 +48,11 @@ class Record {
 	}
 
 	public String getRecord() {
-		return device_id + "," + arrival_time + "," + street_id + "," + street_name;
+		return device_id + GlobalClass.delimiter + arrival_time + GlobalClass.delimiter + departure_time
+				+ GlobalClass.delimiter + duration_seconds + GlobalClass.delimiter + street_marker
+				+ GlobalClass.delimiter + sign + GlobalClass.delimiter + area + GlobalClass.delimiter + street_id
+				+ GlobalClass.delimiter + street_name + GlobalClass.delimiter + between_street1 + GlobalClass.delimiter
+				+ between_street2 + GlobalClass.delimiter + side_of_street + GlobalClass.delimiter + in_violation;
 	}
 
 	@Override

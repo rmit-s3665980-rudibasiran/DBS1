@@ -14,7 +14,7 @@ Title: RMIT Database Systems Assignment 1
 Developer(s): 
 - Rudi Basiran <s3665980@student.rmit.edu.au> 
 Date Created: 30 March 2019 
-Description: --
+Description: dbload Class
 Notes: --
 Change History:
  */
@@ -42,13 +42,13 @@ public class dbload {
 
 		String heapfile = "heap." + t_pagesize;
 
-		System.out.println("================================");
+		Helper.drawLine();
 		System.out.println("Parameters Captured:");
 		System.out.println("Option: " + option);
 		System.out.println("Pagesize: " + t_pagesize);
 		System.out.println("Datafile: " + datafile);
 		System.out.println("Heapfile: " + heapfile);
-		System.out.println("================================");
+		Helper.drawLine();
 
 		FileOutputStream fos = null;
 		File file;
@@ -71,21 +71,21 @@ public class dbload {
 
 			// fos.write(bytesArray);
 			fos.flush();
-			System.out.println("================================");
+			Helper.drawLine();
 			System.out.println("File Written Successfully");
-			System.out.println("================================");
+			Helper.drawLine();
 
 			System.out.println("Reading CSV");
 			List<Record> records = readRecordsFromCSV(datafile);
-			System.out.println("================================");
+			Helper.drawLine();
 			System.out.println("Printing CSV");
 			for (Record r : records) {
 				System.out.println(r);
 				byte[] bytesArray = r.getRecord().getBytes();
-
+				System.out.println("Length of record: " + bytesArray.length);
 				fos.write(bytesArray);
 			}
-			System.out.println("================================");
+			Helper.drawLine();
 
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
@@ -105,7 +105,7 @@ public class dbload {
 		Path pathToFile = Paths.get(fileName);
 		try (BufferedReader br = Files.newBufferedReader(pathToFile, StandardCharsets.US_ASCII)) {
 
-			// read the first line from the csv - ignore the header
+			// read the first line from the csv so as to ignore the header
 			String line = br.readLine();
 
 			// read next line after header
@@ -113,7 +113,7 @@ public class dbload {
 
 			// loop until all lines are read
 			while (line != null) {
-				String[] attributes = line.split(",");
+				String[] attributes = line.split(GlobalClass.delimiter);
 				Record record = createRecord(attributes);
 
 				// adding book into ArrayList
@@ -147,7 +147,7 @@ public class dbload {
 		String side_of_street = metadata[11];
 		String in_violation = metadata[12];
 
-		// create and return record of this metadata
+		// create and return record of this meta-data
 		return new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
 				street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
 	}
