@@ -1,6 +1,8 @@
 import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -52,8 +54,7 @@ public class dbload {
 		Helper.drawLine();
 
 		FileOutputStream fos = null;
-
-		DataOutputStream data = new DataOutputStream(fos);
+		DataOutputStream data = null;
 
 		int numPage = 0;
 		int ttlBytes = 0;
@@ -61,7 +62,20 @@ public class dbload {
 		try {
 
 			File file = new File(heapfile);
-			fos = new FileOutputStream(heapfile);
+			fos = new FileOutputStream(file);
+			data = new DataOutputStream(fos);
+
+			// writing string to a file encoded as modified UTF-8
+			DataOutputStream dataOut = new DataOutputStream(new FileOutputStream("E:\\file.txt"));
+			dataOut.writeUTF("hello");
+
+			// Reading data from the same file
+			DataInputStream dataIn = new DataInputStream(new FileInputStream("E:\\file.txt"));
+
+			while (dataIn.available() > 0) {
+				String k = dataIn.readUTF();
+				System.out.print(k + " ");
+			}
 
 			if (!file.exists()) {
 				file.createNewFile();
@@ -94,7 +108,10 @@ public class dbload {
 					ttlBytes = 0;
 					numPage++;
 				}
+				data.flush();
 				data.write(bytesArray);
+				data.flush();
+
 			}
 			Helper.drawLine();
 
