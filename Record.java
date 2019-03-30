@@ -55,8 +55,4 @@ class Record {
 				+ between_street2 + GlobalClass.delimiter + side_of_street + GlobalClass.delimiter + in_violation;
 	}
 
-	@Override
-	public String toString() {
-		return getRecord();
-	}
 }

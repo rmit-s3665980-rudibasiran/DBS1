@@ -1,10 +1,10 @@
 import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -28,7 +28,7 @@ public class dbload {
 
 	}
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 
 		// java dbload -p pagesize datafile
 
@@ -53,39 +53,26 @@ public class dbload {
 		System.out.println("Heapfile: " + heapfile);
 		Helper.drawLine();
 
-		FileOutputStream fos = null;
-		DataOutputStream data = null;
-
 		int numPage = 0;
 		int ttlBytes = 0;
+		int numRec = 0;
+
+		File file = null;
+		FileOutputStream fos = null;
+		// DataOutputStream dos = null;
 
 		try {
 
-			File file = new File(heapfile);
+			file = new File(heapfile);
 			fos = new FileOutputStream(file);
-			data = new DataOutputStream(fos);
 
-			// writing string to a file encoded as modified UTF-8
-			DataOutputStream dataOut = new DataOutputStream(new FileOutputStream("E:\\file.txt"));
-			dataOut.writeUTF("hello");
+			Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("test.txt"), "UTF8"));
 
-			// Reading data from the same file
-			DataInputStream dataIn = new DataInputStream(new FileInputStream("E:\\file.txt"));
-
-			while (dataIn.available() > 0) {
-				String k = dataIn.readUTF();
-				System.out.print(k + " ");
-			}
-
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			// dos = new DataOutputStream(fos);
 
 			// string converted into bytes
 			// byte[] bytesArray = mycontent.getBytes();
 
-			// fos.write(bytesArray);
-			data.flush();
 			Helper.drawLine();
 			System.out.println("File Written Successfully");
 			Helper.drawLine();
@@ -96,9 +83,14 @@ public class dbload {
 			Helper.drawLine();
 			System.out.println("Printing CSV");
 			for (Record r : records) {
-				// System.out.println(r);
-				byte[] bytesArray = r.getRecord().getBytes();
-				System.out.println("Length of byte: " + bytesArray.length);
+
+				String s = new String("Hello World");
+				out.write(s);
+
+				byte[] bytesArray = s.getBytes();
+				numRec++;
+				// System.out.println("Record " + numRec + ": Length of byte: " +
+				// bytesArray.length);
 				if ((ttlBytes + bytesArray.length) > pagesize) {
 
 				} else {
@@ -108,16 +100,20 @@ public class dbload {
 					ttlBytes = 0;
 					numPage++;
 				}
-				data.flush();
-				data.write(bytesArray);
-				data.flush();
+
+				for (byte b : bytesArray) {
+					System.out.print(b);
+					fos.write(b);
+
+				}
+				fos.flush();
+
+				// to read, use Arrays.toString(bytesArray)
 
 			}
 			Helper.drawLine();
 
-		} catch (
-
-		IOException ioe) {
+		} catch (IOException ioe) {
 			ioe.printStackTrace();
 		} finally {
 			try {
