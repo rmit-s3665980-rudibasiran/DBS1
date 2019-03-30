@@ -21,7 +21,7 @@ class Record {
 	private String street_name;
 	private String between_street1;
 	private String between_street2;
-	private String side_of_sStreet;
+	private String side_of_street;
 	private String in_violation;
 
 	public Record() {
@@ -30,11 +30,21 @@ class Record {
 
 	public Record(String device_id, String arrival_time, String departure_time, String duration_seconds,
 			String street_marker, String sign, String area, String street_id, String street_name,
-			String between_street1, String between_street2, String side_of_sStreet, String in_violation) {
+			String between_street1, String between_street2, String side_of_street, String in_violation) {
+
 		this.device_id = device_id;
 		this.arrival_time = arrival_time;
+		this.departure_time = departure_time;
+		this.duration_seconds = duration_seconds;
+		this.street_marker = street_marker;
+		this.sign = sign;
+		this.area = area;
 		this.street_id = street_id;
 		this.street_name = street_name;
+		this.between_street1 = between_street1;
+		this.between_street2 = between_street2;
+		this.side_of_street = side_of_street;
+		this.in_violation = in_violation;
 	}
 
 	public String getRecord() {

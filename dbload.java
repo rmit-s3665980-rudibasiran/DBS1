@@ -144,12 +144,12 @@ public class dbload {
 		String street_name = metadata[8];
 		String between_street1 = metadata[9];
 		String between_street2 = metadata[10];
-		String side_of_sStreet = metadata[11];
+		String side_of_street = metadata[11];
 		String in_violation = metadata[12];
 
 		// create and return record of this metadata
 		return new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
-				street_id, street_name, between_street1, between_street2, side_of_sStreet, in_violation);
+				street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
 	}
 
 }
