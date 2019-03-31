@@ -1,6 +1,9 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -44,6 +47,13 @@ public class Helper {
 		return r;
 	}
 
+	public static DataInputStream openInputStream(String filename) throws Exception {
+		DataInputStream in = null;
+		File file = new File(filename);
+		in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
+		return in;
+	}
+
 	public static DataOutputStream openOutputStream(String filename) throws Exception {
 		DataOutputStream out = null;
 		File file = new File(filename);
@@ -51,8 +61,8 @@ public class Helper {
 		return out;
 	}
 
-	public static void writeRecords(int pagenumber, Record r, DataOutputStream out) throws Exception {
-		out.writeInt(pagenumber);
+	public static void writeRecords(Record r, DataOutputStream out) throws Exception {
+		out.writeUTF(r.getDAName());
 		out.writeUTF(r.getDeviceID());
 		out.writeUTF(r.getArrivalTime());
 		out.writeUTF(r.getDepartureTime());

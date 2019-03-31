@@ -10,6 +10,7 @@ Change History:
 
 class Record {
 
+	private String da_name;
 	private String device_id;
 	private String arrival_time;
 	private String departure_time;
@@ -32,6 +33,7 @@ class Record {
 			String street_marker, String sign, String area, String street_id, String street_name,
 			String between_street1, String between_street2, int side_of_street, String in_violation) {
 
+		this.da_name = device_id + arrival_time;
 		this.device_id = device_id;
 		this.arrival_time = arrival_time;
 		this.departure_time = departure_time;
@@ -47,8 +49,16 @@ class Record {
 		this.in_violation = (in_violation == "TRUE" ? true : false);
 	}
 
+	public String getDAName() {
+		return this.da_name;
+	}
+
 	public String getDeviceID() {
 		return this.device_id;
+	}
+
+	public void setDeviceID(String device_id) {
+		this.device_id = device_id;
 	}
 
 	public String getArrivalTime() {

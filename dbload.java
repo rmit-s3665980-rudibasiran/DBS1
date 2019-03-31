@@ -74,7 +74,7 @@ public class dbload {
 					numPage++;
 					checkSizeofPage = pagesize - GlobalClass.pagegap;
 				}
-				Helper.writeRecords(numPage, record, dos);
+				Helper.writeRecords(record, dos);
 
 				ttlNumRec++;
 				System.out.println("[Reading CSV line: " + ttlNumRec + "][Page:" + numPage + "]");
