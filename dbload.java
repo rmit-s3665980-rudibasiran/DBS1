@@ -1,7 +1,6 @@
 import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.FileInputStream;
+import java.util.Scanner;
 
 /*
 Title: RMIT Database Systems Assignment 1
@@ -20,6 +19,8 @@ public class dbload {
 	}
 
 	public static void main(String[] args) throws Exception {
+
+		long startTime = System.nanoTime();
 
 		// java dbload -p pagesize datafile
 
@@ -45,96 +46,63 @@ public class dbload {
 		Helper.drawLine();
 
 		int numPage = 0;
-		int ttlBytes = 0;
-		int numRec = 0;
-		int recordInPage = 0;
+		int ttlNumRec = 0;
 
 		DataOutputStream dos = null;
+		FileInputStream inputStream = null;
+		Scanner sc = null;
+
+		Helper.drawLine();
+
+		dos = Helper.openOutputStream(heapfile);
+
 		try {
+			inputStream = new FileInputStream(datafile);
+			sc = new Scanner(inputStream, "UTF-8");
+			sc.nextLine();
+			Record record = null;
+			int checkSizeofPage = pagesize - GlobalClass.pagegap;
+			while (sc.hasNextLine()) {
+				String line = sc.nextLine();
 
-			// string converted into bytes
-			// byte[] bytesArray = mycontent.getBytes();
+				String[] attributes = line.split(GlobalClass.delimiter);
+				record = Helper.createRecord(attributes);
 
-			Helper.drawLine();
-			System.out.println("File Written Successfully");
-			Helper.drawLine();
-
-			// return bytes in UTF-8 character encoding
-			// pros - no need to handle UnsupportedEncodingException
-			// pros - bytes in specified encoding scheme
-
-			System.out.println("Reading CSV");
-			List<Record> records = Helper.readRecordsFromCSV(datafile);
-			List<Page> pages = new ArrayList<>();
-
-			Helper.drawLine();
-
-			dos = Helper.openOutputStream(heapfile);
-			Page p = new Page(numPage, pagesize);
-
-			for (Record r : records) {
-				if (p.isFull(r.getSizeOfRecord())) {
-					if (GlobalClass.debugMode) {
-						System.out.println("Full! Page No./Record No.:" + numPage + "/" + recordInPage
-								+ " [Size of Rec." + r.getSizeOfRecord() + "][Page Space Remaining:" + p.getRemaining()
-								+ "][No. of Recs in Page:" + p.numRecords() + "]");
-					}
-
-					pages.add(p);
-					numPage++;
-					p = new Page(numPage, pagesize);
-					recordInPage = 0;
-					p.addRecord(r);
-					recordInPage++;
+				if (checkSizeofPage - record.getSizeOfRecord() > 0) {
+					checkSizeofPage = checkSizeofPage - record.getSizeOfRecord();
 				} else {
-					if (GlobalClass.debugMode) {
-						System.out.println("NotFull! Page No./Record No.:" + numPage + "/" + recordInPage
-								+ " [Size of Rec." + r.getSizeOfRecord() + "][Page Space Remaining:" + p.getRemaining()
-								+ "][No. of Recs in Page:" + p.numRecords() + "]");
-					}
-					p.addRecord(r);
-					recordInPage++;
+					numPage++;
+					checkSizeofPage = pagesize - GlobalClass.pagegap;
 				}
+				Helper.writeRecords(numPage, record, dos);
+
+				ttlNumRec++;
+				System.out.println("[Reading CSV line: " + ttlNumRec + "][Page:" + numPage + "]");
 
 			}
-			boolean found = false;
-			for (Page pg : pages) {
-				if (pg.getPageNumber() == p.getPageNumber()) {
-					found = true;
-					break;
-				}
-
-			}
-			if (!found)
-				pages.add(p);
-			numPage = 0;
-			numRec = 0;
-			for (Page pg : pages) {
-				numPage++;
-				for (Record r : pg.getRecords()) {
-					numRec++;
-					Helper.writeRecords(numPage, r, dos);
-				}
+			// scanner suppresses exceptions
+			if (sc.ioException() != null) {
+				throw sc.ioException();
 			}
 
-			// to read, use Arrays.toString(bytesArray)
-			dos.close();
-
-			Helper.logger(numRec, numPage);
-
-			Helper.drawLine();
-
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
 		} finally {
-			try {
-				if (dos != null) {
-					dos.close();
-				}
-			} catch (IOException ioe) {
-				System.out.println("Error in closing the Stream");
+			if (inputStream != null) {
+				inputStream.close();
+			}
+			if (sc != null) {
+				sc.close();
 			}
 		}
+
+		dos.close();
+
+		long endTime = System.nanoTime();
+		long totalTime = endTime - startTime;
+
+		Helper.logger(ttlNumRec, numPage, totalTime);
+
+		Helper.drawLine();
+
 	}
 
 }

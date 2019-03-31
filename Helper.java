@@ -1,15 +1,8 @@
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 /*
 Title: RMIT Database Systems Assignment 1
@@ -27,37 +20,6 @@ public class Helper {
 		for (int x = 0; x < 50; x++)
 			System.out.print("-");
 		System.out.println("");
-	}
-
-	public static List<Record> readRecordsFromCSV(String fileName) {
-		List<Record> records = new ArrayList<>();
-		Path pathToFile = Paths.get(fileName);
-		try (BufferedReader br = Files.newBufferedReader(pathToFile, StandardCharsets.US_ASCII)) {
-
-			// read the first line from the csv so as to ignore the header
-			String line = br.readLine();
-
-			// read next line after header
-			line = br.readLine();
-
-			// loop until all lines are read
-			while (line != null) {
-				String[] attributes = line.split(GlobalClass.delimiter);
-				Record record = Helper.createRecord(attributes);
-
-				// adding book into ArrayList
-				records.add(record);
-
-				// read next line before looping
-				// if end of file reached, line would be null
-				line = br.readLine();
-
-			}
-
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-		return records;
 	}
 
 	public static Record createRecord(String[] metadata) {
@@ -106,7 +68,7 @@ public class Helper {
 		out.writeUTF(r.getInViolationStr());
 	}
 
-	public static void logger(int numRec, int numPages) {
+	public static void logger(int numRec, int numPages, long totalTime) {
 		/*
 		 * Your dbload program must also output the following to stdout, the number of
 		 * records loaded, number of pages used and the number of milliseconds to create
@@ -121,7 +83,8 @@ public class Helper {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			String s = "No. of Pages: " + numPages + "\n" + "No. of records: " + numRec + "\n";
+			String s = "No. of Pages: " + numPages + "\n" + "No. of records: " + numRec + "\n"
+					+ "Time Elapsed in Milliseconds: " + Long.toString(totalTime / 1000000) + "\n";
 			fos.write(s.getBytes());
 		}
 
