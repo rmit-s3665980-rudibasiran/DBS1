@@ -49,12 +49,15 @@ public class dbload {
 		int ttlNumRec = 0;
 
 		DataOutputStream dos = null;
+		DataOutputStream pos = null;
 		FileInputStream inputStream = null;
 		Scanner sc = null;
 
 		Helper.drawLine();
 
+		Page p;
 		dos = Helper.openOutputStream(heapfile);
+		pos = Helper.openOutputStreamPage(heapfile + ".page");
 
 		try {
 			inputStream = new FileInputStream(datafile);
@@ -62,6 +65,8 @@ public class dbload {
 			sc.nextLine();
 			Record record = null;
 			int checkSizeofPage = pagesize - GlobalClass.pagegap;
+
+			p = new Page(pagesize, numPage);
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 
@@ -71,9 +76,17 @@ public class dbload {
 				if (checkSizeofPage - record.getSizeOfRecord() > 0) {
 					checkSizeofPage = checkSizeofPage - record.getSizeOfRecord();
 				} else {
+					if (GlobalClass.usePageClass)
+						Helper.writePage(p, pos);
+
 					numPage++;
 					checkSizeofPage = pagesize - GlobalClass.pagegap;
+					if (GlobalClass.usePageClass)
+						p.clearPage(numPage);
 				}
+				if (GlobalClass.usePageClass)
+					p.fillRecord(record);
+
 				Helper.writeRecords(record, dos);
 
 				ttlNumRec++;
@@ -94,6 +107,7 @@ public class dbload {
 			}
 		}
 
+		pos.close();
 		dos.close();
 
 		long endTime = System.nanoTime();

@@ -15,6 +15,7 @@ public class GlobalClass {
 	public static int pagegap = 256;
 	public static int logWrite = 0;
 	public static int logSearch = 1;
+	public static boolean usePageClass = false;
 
 	public static boolean debugMode = true;
 

@@ -114,12 +114,12 @@ class Record {
 	}
 
 	public String getRecord() {
-		return device_id + GlobalClass.delimiter + arrival_time + GlobalClass.delimiter + departure_time
-				+ GlobalClass.delimiter + Double.toString(duration_seconds) + GlobalClass.delimiter + street_marker
-				+ GlobalClass.delimiter + sign + GlobalClass.delimiter + area + GlobalClass.delimiter + street_id
-				+ GlobalClass.delimiter + street_name + GlobalClass.delimiter + between_street1 + GlobalClass.delimiter
-				+ between_street2 + GlobalClass.delimiter + Integer.toString(side_of_street) + GlobalClass.delimiter
-				+ (in_violation ? "TRUE" : "FALSE");
+		return da_name + GlobalClass.delimiter + device_id + GlobalClass.delimiter + arrival_time
+				+ GlobalClass.delimiter + departure_time + GlobalClass.delimiter + Double.toString(duration_seconds)
+				+ GlobalClass.delimiter + street_marker + GlobalClass.delimiter + sign + GlobalClass.delimiter + area
+				+ GlobalClass.delimiter + street_id + GlobalClass.delimiter + street_name + GlobalClass.delimiter
+				+ between_street1 + GlobalClass.delimiter + between_street2 + GlobalClass.delimiter
+				+ Integer.toString(side_of_street) + GlobalClass.delimiter + (in_violation ? "TRUE" : "FALSE");
 	}
 
 }

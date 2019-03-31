@@ -76,7 +76,7 @@ public class dbquery {
 				numFound++;
 
 				Helper.loggerMatch(
-						"Found in record [" + x + "] " + device_id + "-->" + arrival_time + "-->" + duration_seconds
+						"Found in record [" + x + "]: " + device_id + "-->" + arrival_time + "-->" + duration_seconds
 								+ "-->" + street_name + "--> " + side_of_street + "-->" + in_violation + "\n");
 
 			}

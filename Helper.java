@@ -61,6 +61,17 @@ public class Helper {
 		return out;
 	}
 
+	public static DataOutputStream openOutputStreamPage(String filename) throws Exception {
+		DataOutputStream out = null;
+		File file = new File(filename);
+		out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+		return out;
+	}
+
+	public static void writePage(Page p, DataOutputStream out) throws Exception {
+		out.write(p.getPage());
+	}
+
 	public static void writeRecords(Record r, DataOutputStream out) throws Exception {
 		out.writeUTF(r.getDAName());
 		out.writeUTF(r.getDeviceID());
