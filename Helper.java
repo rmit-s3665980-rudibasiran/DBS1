@@ -78,7 +78,34 @@ public class Helper {
 		out.writeUTF(r.getInViolationStr());
 	}
 
-	public static void logger(int numRec, int numPages, long totalTime) {
+	public static void loggerMatch(String s) {
+		FileOutputStream fos = null;
+		File file;
+		try {
+			file = new File("stdout");
+			fos = new FileOutputStream(file, true);
+
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			fos.write(s.getBytes());
+		}
+
+		catch (IOException ioe) {
+			ioe.printStackTrace();
+		} finally {
+			try {
+				if (fos != null) {
+					fos.close();
+				}
+			} catch (IOException ioe) {
+				System.out.println("Error");
+			}
+		}
+
+	}
+
+	public static void logger(int numRec, int numPages, long totalTime, int l) {
 		/*
 		 * Your dbload program must also output the following to stdout, the number of
 		 * records loaded, number of pages used and the number of milliseconds to create
@@ -88,13 +115,14 @@ public class Helper {
 		File file;
 		try {
 			file = new File("stdout");
-			fos = new FileOutputStream(file);
+			fos = new FileOutputStream(file, true);
 
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			String s = "No. of Pages: " + numPages + "\n" + "No. of records: " + numRec + "\n"
-					+ "Time Elapsed in Milliseconds: " + Long.toString(totalTime / 1000000) + "\n";
+			String s = (l == GlobalClass.logSearch ? "Search Statistics:" : "Loading Statistics:") + "\nNo. of Pages: "
+					+ numPages + "\n" + "No. of records: " + numRec + "\n" + "Time Elapsed in Milliseconds: "
+					+ Long.toString(totalTime / 1000000) + "\n";
 			fos.write(s.getBytes());
 		}
 
@@ -110,4 +138,5 @@ public class Helper {
 			}
 		}
 	}
+
 }

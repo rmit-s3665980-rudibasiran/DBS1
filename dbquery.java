@@ -18,6 +18,8 @@ public class dbquery {
 	public static void main(String[] args) throws Exception {
 		// java dbquery text pagesize
 
+		long startTime = System.nanoTime();
+
 		String text = ""; // text to search for
 		String t_pagesize = ""; // temp page size to capture integer input
 		String datafile = ""; // file to read
@@ -34,9 +36,15 @@ public class dbquery {
 		dis = Helper.openInputStream(heapfile);
 
 		int x = 0;
+		int ttlNumRec = 0;
+		int numPage = 0;
+		int numFound = 0;
+		int checkSizeofPage = pagesize - GlobalClass.pagegap;
 		byte[] tmpByteArray = new byte[pagesize];
-		Record r = new Record();
+
 		while (dis.available() > 0) {
+
+			ttlNumRec++;
 
 			String da_name = dis.readUTF();
 			String device_id = dis.readUTF();
@@ -51,15 +59,36 @@ public class dbquery {
 			String between_street1 = dis.readUTF();
 			String between_street2 = dis.readUTF();
 			int side_of_street = dis.readInt();
-			boolean in_violation = (dis.readUTF() == "TRUE" ? true : false);
+			String in_violation = dis.readUTF();
 			x++;
 
+			Record r = new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
+					street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
+
+			if (checkSizeofPage - r.getSizeOfRecord() > 0) {
+				checkSizeofPage = checkSizeofPage - r.getSizeOfRecord();
+			} else {
+				numPage++;
+				checkSizeofPage = pagesize - GlobalClass.pagegap;
+			}
+
 			if (da_name.contains(text)) {
-				System.out.println("Found in record [" + x + "] " + device_id + "-->" + arrival_time + " --> "
-						+ street_name + " --> " + side_of_street + " -->" + (in_violation ? "TRUE" : "FALSE"));
+				numFound++;
+
+				Helper.loggerMatch(
+						"Found in record [" + x + "] " + device_id + "-->" + arrival_time + "-->" + duration_seconds
+								+ "-->" + street_name + "--> " + side_of_street + "-->" + in_violation + "\n");
+
 			}
 
 		}
+
+		long endTime = System.nanoTime();
+		long totalTime = endTime - startTime;
+
+		Helper.logger(ttlNumRec, numPage, totalTime, GlobalClass.logSearch);
+
+		Helper.drawLine();
 
 		// while ((x = dis.read(tmpByteArray)) != -1) {
 

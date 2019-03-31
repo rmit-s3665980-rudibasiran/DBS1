@@ -99,7 +99,7 @@ public class dbload {
 		long endTime = System.nanoTime();
 		long totalTime = endTime - startTime;
 
-		Helper.logger(ttlNumRec, numPage, totalTime);
+		Helper.logger(ttlNumRec, numPage, totalTime, GlobalClass.logWrite);
 
 		Helper.drawLine();
 

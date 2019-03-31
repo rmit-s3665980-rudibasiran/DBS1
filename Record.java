@@ -57,10 +57,6 @@ class Record {
 		return this.device_id;
 	}
 
-	public void setDeviceID(String device_id) {
-		this.device_id = device_id;
-	}
-
 	public String getArrivalTime() {
 		return this.arrival_time;
 	}

@@ -13,6 +13,8 @@ public class GlobalClass {
 	public static String delimiter = ",";
 	public static int pagesize = 4096;
 	public static int pagegap = 256;
+	public static int logWrite = 0;
+	public static int logSearch = 1;
 
 	public static boolean debugMode = true;
 
