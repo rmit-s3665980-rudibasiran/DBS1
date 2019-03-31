@@ -21,8 +21,8 @@ class Record {
 	private String street_name;
 	private String between_street1;
 	private String between_street2;
-	private double side_of_street;
-	private String in_violation;
+	private int side_of_street;
+	private boolean in_violation;
 
 	public Record() {
 
@@ -30,7 +30,7 @@ class Record {
 
 	public Record(String device_id, String arrival_time, String departure_time, double duration_seconds,
 			String street_marker, String sign, String area, String street_id, String street_name,
-			String between_street1, String between_street2, double side_of_street, String in_violation) {
+			String between_street1, String between_street2, int side_of_street, String in_violation) {
 
 		this.device_id = device_id;
 		this.arrival_time = arrival_time;
@@ -44,23 +44,67 @@ class Record {
 		this.between_street1 = between_street1;
 		this.between_street2 = between_street2;
 		this.side_of_street = side_of_street;
-		this.in_violation = in_violation;
+		this.in_violation = (in_violation == "TRUE" ? true : false);
 	}
 
 	public String getDeviceID() {
 		return this.device_id;
 	}
 
-	public String getStreetName() {
-		return this.street_name;
+	public String getArrivalTime() {
+		return this.arrival_time;
+	}
+
+	public String getDepartureTime() {
+		return this.departure_time;
 	}
 
 	public double getDuration() {
 		return this.duration_seconds;
 	}
 
-	public double getSideOfStreet() {
+	public String getStreetMarker() {
+		return this.street_marker;
+	}
+
+	public String getSign() {
+		return this.sign;
+	}
+
+	public String getArea() {
+		return this.area;
+	}
+
+	public String getStreetID() {
+		return this.street_id;
+	}
+
+	public String getStreetName() {
+		return this.street_name;
+	}
+
+	public String getBetweenStreet1() {
+		return this.between_street1;
+	}
+
+	public String getBetweenStreet2() {
+		return this.between_street2;
+	}
+
+	public int getSideOfStreet() {
 		return this.side_of_street;
+	}
+
+	public boolean getInViolation() {
+		return this.in_violation;
+	}
+
+	public String getInViolationStr() {
+		return (this.in_violation ? "TRUE" : "FALSE");
+	}
+
+	public int getSizeOfRecord() {
+		return getRecord().getBytes().length;
 	}
 
 	public String getRecord() {
@@ -68,8 +112,8 @@ class Record {
 				+ GlobalClass.delimiter + Double.toString(duration_seconds) + GlobalClass.delimiter + street_marker
 				+ GlobalClass.delimiter + sign + GlobalClass.delimiter + area + GlobalClass.delimiter + street_id
 				+ GlobalClass.delimiter + street_name + GlobalClass.delimiter + between_street1 + GlobalClass.delimiter
-				+ between_street2 + GlobalClass.delimiter + Double.toString(side_of_street) + GlobalClass.delimiter
-				+ in_violation;
+				+ between_street2 + GlobalClass.delimiter + Integer.toString(side_of_street) + GlobalClass.delimiter
+				+ (in_violation ? "TRUE" : "FALSE");
 	}
 
 }

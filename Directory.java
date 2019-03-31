@@ -4,7 +4,7 @@ Developer(s):
 - Rudi Basiran <s3665980@student.rmit.edu.au> 
 Date Created: 30 March 2019 
 Description: Directory Class
-Notes: --
+Notes: Not implemented yet
 Change History:
  */
 public class Directory {

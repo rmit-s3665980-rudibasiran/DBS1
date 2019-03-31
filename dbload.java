@@ -1,13 +1,5 @@
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,10 +27,10 @@ public class dbload {
 		String t_pagesize = ""; // temp page size to capture integer input
 		String datafile = ""; // file to read
 
-		option = args[0]; // =="-p"
-		t_pagesize = args[1]; // =="pagesize"
-		datafile = args[2]; // =="datafile"
-		int pagesize = 4096; // page size
+		option = args[0]; // "-p"
+		t_pagesize = args[1]; // "pagesize"
+		datafile = args[2]; // "datafile"
+		int pagesize = GlobalClass.pagesize; // page size
 
 		pagesize = Integer.parseInt(t_pagesize);
 
@@ -55,6 +47,7 @@ public class dbload {
 		int numPage = 0;
 		int ttlBytes = 0;
 		int numRec = 0;
+		int recordInPage = 0;
 
 		DataOutputStream dos = null;
 		try {
@@ -71,26 +64,63 @@ public class dbload {
 			// pros - bytes in specified encoding scheme
 
 			System.out.println("Reading CSV");
-			// Page page = new Page(pagesize);
-			List<Record> records = readRecordsFromCSV(datafile);
-			Helper.drawLine();
-			System.out.println("Printing CSV");
+			List<Record> records = Helper.readRecordsFromCSV(datafile);
+			List<Page> pages = new ArrayList<>();
 
-			dos = openOutputStream(heapfile);
+			Helper.drawLine();
+
+			dos = Helper.openOutputStream(heapfile);
+			Page p = new Page(numPage, pagesize);
+
 			for (Record r : records) {
-				writeRecords(r, dos);
-				numRec++;
-				System.out.println("Page [" + numPage + "] Length of record " + numRec + ": " + r.getRecord().length());
-				if ((ttlBytes + r.getRecord().length()) < pagesize) {
-					ttlBytes = ttlBytes + r.getRecord().length();
-				} else {
-					ttlBytes = 0;
+				if (p.isFull(r.getSizeOfRecord())) {
+					if (GlobalClass.debugMode) {
+						System.out.println("Full! Page No./Record No.:" + numPage + "/" + recordInPage
+								+ " [Size of Rec." + r.getSizeOfRecord() + "][Page Space Remaining:" + p.getRemaining()
+								+ "][No. of Recs in Page:" + p.numRecords() + "]");
+					}
+
+					pages.add(p);
 					numPage++;
+					p = new Page(numPage, pagesize);
+					recordInPage = 0;
+					p.addRecord(r);
+					recordInPage++;
+				} else {
+					if (GlobalClass.debugMode) {
+						System.out.println("NotFull! Page No./Record No.:" + numPage + "/" + recordInPage
+								+ " [Size of Rec." + r.getSizeOfRecord() + "][Page Space Remaining:" + p.getRemaining()
+								+ "][No. of Recs in Page:" + p.numRecords() + "]");
+					}
+					p.addRecord(r);
+					recordInPage++;
+				}
+
+			}
+			boolean found = false;
+			for (Page pg : pages) {
+				if (pg.getPageNumber() == p.getPageNumber()) {
+					found = true;
+					break;
+				}
+
+			}
+			if (!found)
+				pages.add(p);
+			numPage = 0;
+			numRec = 0;
+			for (Page pg : pages) {
+				numPage++;
+				for (Record r : pg.getRecords()) {
+					numRec++;
+					Helper.writeRecords(numPage, r, dos);
 				}
 			}
 
 			// to read, use Arrays.toString(bytesArray)
 			dos.close();
+
+			Helper.logger(numRec, numPage);
 
 			Helper.drawLine();
 
@@ -105,73 +135,6 @@ public class dbload {
 				System.out.println("Error in closing the Stream");
 			}
 		}
-	}
-
-	private static List<Record> readRecordsFromCSV(String fileName) {
-		List<Record> records = new ArrayList<>();
-		Path pathToFile = Paths.get(fileName);
-		try (BufferedReader br = Files.newBufferedReader(pathToFile, StandardCharsets.US_ASCII)) {
-
-			// read the first line from the csv so as to ignore the header
-			String line = br.readLine();
-
-			// read next line after header
-			line = br.readLine();
-
-			// loop until all lines are read
-			while (line != null) {
-				String[] attributes = line.split(GlobalClass.delimiter);
-				Record record = createRecord(attributes);
-
-				// adding book into ArrayList
-				records.add(record);
-
-				// read next line before looping
-				// if end of file reached, line would be null
-				line = br.readLine();
-
-			}
-
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		}
-		return records;
-	}
-
-	private static Record createRecord(String[] metadata) {
-
-		String device_id = metadata[0];
-		String arrival_time = metadata[1];
-		String departure_time = metadata[2];
-		double duration_seconds = Double.parseDouble(metadata[3]);
-		String street_marker = metadata[4];
-		String sign = metadata[5];
-		String area = metadata[6];
-		String street_id = metadata[7];
-		String street_name = metadata[8];
-		String between_street1 = metadata[9];
-		String between_street2 = metadata[10];
-		double side_of_street = Double.parseDouble(metadata[11]);
-		String in_violation = metadata[12];
-
-		// create and return record of meta-data
-		Record r = new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
-				street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
-		return r;
-	}
-
-	private static DataOutputStream openOutputStream(String filename) throws Exception {
-		DataOutputStream out = null;
-		File file = new File(filename);
-		out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
-		return out;
-	}
-
-	private static void writeRecords(Record r, DataOutputStream out) throws Exception {
-		out.writeUTF(r.getDeviceID());
-		out.writeUTF(r.getStreetName());
-		out.writeDouble(r.getDuration());
-		out.writeDouble(r.getSideOfStreet());
 	}
 
 }
