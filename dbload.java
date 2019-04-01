@@ -24,6 +24,10 @@ public class dbload {
 
 		// java dbload -p pagesize datafile
 
+		// Note that input error detection is not implemented as the aim of the codes is
+		// to simulate paging and it assumes that the user will input erroneous
+		// parameters when executing the program.
+
 		String option = ""; // -p option
 		String t_pagesize = ""; // temp page size to capture integer input
 		String datafile = ""; // file to read
@@ -73,6 +77,7 @@ public class dbload {
 				String[] attributes = line.split(GlobalClass.delimiter);
 				record = Helper.createRecord(attributes);
 
+				// check whether page is full
 				if (checkSizeofPage - record.getSizeOfRecord() > 0) {
 					checkSizeofPage = checkSizeofPage - record.getSizeOfRecord();
 				} else {

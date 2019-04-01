@@ -116,7 +116,7 @@ public class Helper {
 
 	}
 
-	public static void logger(int numRec, int numPages, long totalTime, int l) {
+	public static void logger(int numRec, int numPages, long totalTime, int logtype) {
 		/*
 		 * Your dbload program must also output the following to stdout, the number of
 		 * records loaded, number of pages used and the number of milliseconds to create
@@ -131,9 +131,9 @@ public class Helper {
 			if (!file.exists()) {
 				file.createNewFile();
 			}
-			String s = (l == GlobalClass.logSearch ? "Search Statistics:" : "Loading Statistics:") + "\nNo. of Pages: "
-					+ numPages + "\n" + "No. of records: " + numRec + "\n" + "Time Elapsed in Milliseconds: "
-					+ Long.toString(totalTime / 1000000) + "\n";
+			String s = (logtype == GlobalClass.logSearch ? "Search Statistics:" : "Loading Statistics:")
+					+ "\nNo. of Pages: " + numPages + "\n" + "No. of records: " + numRec + "\n"
+					+ "Time Elapsed in Milliseconds: " + Long.toString(totalTime / 1000000) + "\n";
 			fos.write(s.getBytes());
 		}
 

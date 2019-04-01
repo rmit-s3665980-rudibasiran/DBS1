@@ -4,7 +4,7 @@ Developer(s):
 - Rudi Basiran <s3665980@student.rmit.edu.au> 
 Date Created: 30 March 2019 
 Description: Global Class
-Notes: --
+Notes: Global Variables
 Change History:
  */
 

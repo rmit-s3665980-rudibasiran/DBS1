@@ -18,6 +18,10 @@ public class dbquery {
 	public static void main(String[] args) throws Exception {
 		// java dbquery text pagesize
 
+		// Note that input error detection is not implemented as the aim of the codes is
+		// to simulate paging and it assumes that the user will input erroneous
+		// parameters when executing the program.
+
 		long startTime = System.nanoTime();
 
 		String text = ""; // text to search for
@@ -65,6 +69,7 @@ public class dbquery {
 			Record r = new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
 					street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
 
+			// check whether page has been read
 			if (checkSizeofPage - r.getSizeOfRecord() > 0) {
 				checkSizeofPage = checkSizeofPage - r.getSizeOfRecord();
 			} else {
@@ -89,8 +94,6 @@ public class dbquery {
 		Helper.logger(ttlNumRec, numPage, totalTime, GlobalClass.logSearch);
 
 		Helper.drawLine();
-
-		// while ((x = dis.read(tmpByteArray)) != -1) {
 
 	}
 
