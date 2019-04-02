@@ -47,6 +47,7 @@ public class Helper {
 		return r;
 	}
 
+	// data input stream
 	public static DataInputStream openInputStream(String filename) throws Exception {
 		DataInputStream in = null;
 		File file = new File(filename);
@@ -54,6 +55,7 @@ public class Helper {
 		return in;
 	}
 
+	// data output stream
 	public static DataOutputStream openOutputStream(String filename) throws Exception {
 		DataOutputStream out = null;
 		File file = new File(filename);
@@ -61,6 +63,7 @@ public class Helper {
 		return out;
 	}
 
+	// data output stream for page
 	public static DataOutputStream openOutputStreamPage(String filename) throws Exception {
 		DataOutputStream out = null;
 		File file = new File(filename);
@@ -68,11 +71,14 @@ public class Helper {
 		return out;
 	}
 
+	// write page
 	public static void writePage(Page p, DataOutputStream out) throws Exception {
 		out.write(p.getPage());
 	}
 
 	public static void writeRecords(Record r, DataOutputStream out) throws Exception {
+
+		// write as UTF, Int or Double
 		out.writeUTF(r.getDAName());
 		out.writeUTF(r.getDeviceID());
 		out.writeUTF(r.getArrivalTime());
@@ -89,6 +95,7 @@ public class Helper {
 		out.writeUTF(r.getInViolationStr());
 	}
 
+	// log when test search found
 	public static void loggerMatch(String s) {
 		FileOutputStream fos = null;
 		File file;
@@ -116,6 +123,7 @@ public class Helper {
 
 	}
 
+	// log results
 	public static void logger(int numRec, int numPages, long totalTime, int logtype) {
 		/*
 		 * Your dbload program must also output the following to stdout, the number of

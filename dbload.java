@@ -35,11 +35,11 @@ public class dbload {
 		option = args[0]; // "-p"
 		t_pagesize = args[1]; // "pagesize"
 		datafile = args[2]; // "datafile"
-		int pagesize = GlobalClass.pagesize; // page size
+		int pagesize = GlobalClass.pagesize; // set default page size
 
-		pagesize = Integer.parseInt(t_pagesize);
+		pagesize = Integer.parseInt(t_pagesize); // set page size according to what user input
 
-		String heapfile = "heap." + t_pagesize;
+		String heapfile = "heap." + t_pagesize; // set heap file name
 
 		Helper.drawLine();
 		System.out.println("Parameters Captured:");
@@ -49,8 +49,8 @@ public class dbload {
 		System.out.println("Heapfile: " + heapfile);
 		Helper.drawLine();
 
-		int numPage = 0;
-		int ttlNumRec = 0;
+		int numPage = 0; // count total number of pages
+		int numRec = 0; // count total number of records read
 
 		DataOutputStream dos = null;
 		DataOutputStream pos = null;
@@ -59,43 +59,47 @@ public class dbload {
 
 		Helper.drawLine();
 
-		Page p;
 		dos = Helper.openOutputStream(heapfile);
 		pos = Helper.openOutputStreamPage(heapfile + ".page");
 
 		try {
+
+			Record record = null;
+			Page p = new Page(pagesize, numPage);
+			int checkSizeofPage = pagesize - GlobalClass.pagegap;
+
 			inputStream = new FileInputStream(datafile);
 			sc = new Scanner(inputStream, "UTF-8");
 			sc.nextLine();
-			Record record = null;
-			int checkSizeofPage = pagesize - GlobalClass.pagegap;
 
-			p = new Page(pagesize, numPage);
+			// read whole file
 			while (sc.hasNextLine()) {
 				String line = sc.nextLine();
 
-				String[] attributes = line.split(GlobalClass.delimiter);
-				record = Helper.createRecord(attributes);
+				String[] attributes = line.split(GlobalClass.delimiter); // get all columns delimited into string array
+				record = Helper.createRecord(attributes); // build columns into record class
 
 				// check whether page is full
 				if (checkSizeofPage - record.getSizeOfRecord() > 0) {
+					// decrement balance space if not full
 					checkSizeofPage = checkSizeofPage - record.getSizeOfRecord();
 				} else {
 					if (GlobalClass.usePageClass)
 						Helper.writePage(p, pos);
-
+					// set new page if current page full
 					numPage++;
 					checkSizeofPage = pagesize - GlobalClass.pagegap;
 					if (GlobalClass.usePageClass)
 						p.clearPage(numPage);
 				}
+
+				// write to disk
+				Helper.writeRecords(record, dos);
 				if (GlobalClass.usePageClass)
 					p.fillRecord(record);
 
-				Helper.writeRecords(record, dos);
-
-				ttlNumRec++;
-				System.out.println("[Reading CSV line: " + ttlNumRec + "][Page:" + numPage + "]");
+				numRec++;
+				System.out.println("[Reading CSV line: " + numRec + "][Page:" + numPage + "]");
 
 			}
 			// scanner suppresses exceptions
@@ -118,7 +122,7 @@ public class dbload {
 		long endTime = System.nanoTime();
 		long totalTime = endTime - startTime;
 
-		Helper.logger(ttlNumRec, numPage, totalTime, GlobalClass.logWrite);
+		Helper.logger(numRec, numPage, totalTime, GlobalClass.logWrite);
 
 		Helper.drawLine();
 

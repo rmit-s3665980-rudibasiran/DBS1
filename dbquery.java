@@ -24,11 +24,11 @@ public class dbquery {
 
 		long startTime = System.nanoTime();
 
-		String text = ""; // text to search for
+		String textSearch = ""; // text to search for
 		String t_pagesize = ""; // temp page size to capture integer input
 		String datafile = ""; // file to read
 
-		text = args[0]; // "text"
+		textSearch = args[0]; // "text"
 		t_pagesize = args[1]; // "pagesize"
 
 		int pagesize = GlobalClass.pagesize; // page size
@@ -50,6 +50,8 @@ public class dbquery {
 
 			ttlNumRec++;
 
+			// read as UTF, Int or Double
+
 			String da_name = dis.readUTF();
 			String device_id = dis.readUTF();
 			String arrival_time = dis.readUTF();
@@ -66,6 +68,7 @@ public class dbquery {
 			String in_violation = dis.readUTF();
 			x++;
 
+			// populate instance with data
 			Record r = new Record(device_id, arrival_time, departure_time, duration_seconds, street_marker, sign, area,
 					street_id, street_name, between_street1, between_street2, side_of_street, in_violation);
 
@@ -77,7 +80,8 @@ public class dbquery {
 				checkSizeofPage = pagesize - GlobalClass.pagegap;
 			}
 
-			if (da_name.contains(text)) {
+			// search for queried text
+			if (da_name.contains(textSearch)) {
 				numFound++;
 
 				Helper.loggerMatch(
